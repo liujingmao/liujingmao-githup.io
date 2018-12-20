@@ -8,8 +8,75 @@ Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://j
 
 Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-```markdown
-Syntax highlighted code block
+```
+package huawei.com.sparksql.sparksql
+
+import org.apache.spark.{SparkConf, SparkContext}
+
+object StatURITime {
+
+  // https //todo: labels is not supported//shop159942490.taobao.com/?spm=a217m.8316598.711712.8.426d33d5KRgTIh	[2016-07-17 22:48:19]	75
+  // https://blog.csdn.net/qq_24073707/article/details/80665991	[2000-07-05 15:18:40]	66
+  def main(args: Array[String]): Unit = {
+
+    val conf = new SparkConf().setAppName("GetURLTime").setMaster("local[2]")
+
+    val spark = new SparkContext(conf)
+
+    val rdd1= spark.textFile("/Users/liujingmao/Downloads/data.txt")
+
+    val rdd2=rdd1.map(line=>{
+
+      val f = line.split("\t")
+
+      val domain_url = f(0).split("https://")(1)
+
+      val tmp=domain_url.split("/")
+
+      val domain=tmp(0)
+
+      val url=domain_url.split(domain)(1)
+
+      val times = f(2)
+
+      ("域名："+domain,("URL："+url,"次数："+times))
+
+
+    })
+
+
+    //rdd2.take(100).foreach(println)
+
+
+
+    val rdd3 = rdd2.groupBy(_._1)
+
+    rdd3.foreach(println)
+
+
+    val rdd4= rdd3.mapValues(it=>{
+
+      it.toList.sortBy(_._2).reverse
+
+    })
+
+      //.foreach(println)
+
+  spark.stop()
+
+
+  }
+
+
+}
+
+
+
+```
+
+
+
+
 
 # Header 1
 ## Header 2
